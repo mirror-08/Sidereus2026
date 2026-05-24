@@ -1259,33 +1259,36 @@ function buildMiniSeat(hlRow, hlNum) {
     }
   });
   const cls = c => !c ? '' : c >= 5 ? 'v5' : 'v' + c;
-  const allRows = [...ROWS_1F, ...ROWS_2F];
-  const hlIdx = allRows.indexOf(hlRow);
-  const startIdx = Math.max(0, hlIdx - 2);
-  const endIdx   = Math.min(allRows.length - 1, hlIdx + 2);
 
-  let html = '<div style="overflow-x:auto;margin:8px 0;"><div style="display:inline-block;">';
-  for (let i = startIdx; i <= endIdx; i++) {
-    const row = allRows[i];
-    const cfg = SIDEREUS_ROWS[row];
-    if (!cfg) continue;
-    const isHL = row === hlRow;
-    html += `<div style="display:flex;gap:1px;align-items:center;margin-bottom:1px;">`;
-    html += `<div style="width:16px;text-align:right;font-size:7px;color:${isHL?'var(--accent)':'var(--text3)'};padding-right:2px;font-weight:${isHL?'700':'400'};">${row}</div>`;
-    cfg.sections.forEach((sec, si) => {
-      if (si > 0) html += '<div style="width:2px;"></div>';
-      for (let seat = sec[0]; seat <= sec[1]; seat++) {
-        const k = `${row}-${seat}`;
-        const cnt = seatMap[k] || 0;
-        const c = cls(cnt);
-        const isHLSeat = isHL && seat === parseInt(hlNum);
-        html += `<div class="seat-cell${c?' '+c:''}" style="width:8px;height:8px;${isHLSeat?'outline:2px solid var(--accent);outline-offset:1px;position:relative;z-index:1;':''}" title="${row}열 ${seat}번"></div>`;
-      }
+  function renderSectionMini(rows, label) {
+    let html = `<div style="margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px;text-align:center;">${label}</div><div style="display:flex;flex-direction:column;align-items:center;">`;
+    rows.forEach(row => {
+      const cfg = SIDEREUS_ROWS[row];
+      if (!cfg) return;
+      const isHLRow = row === hlRow;
+      html += `<div style="display:flex;gap:1px;align-items:center;margin-bottom:1px;">`;
+      html += `<div style="width:14px;text-align:right;font-size:7px;color:${isHLRow?'var(--accent)':'var(--text3)'};padding-right:2px;font-weight:${isHLRow?'700':'400'};">${row}</div>`;
+      cfg.sections.forEach((sec, si) => {
+        if (si > 0) html += '<div style="width:2px;"></div>';
+        for (let seat = sec[0]; seat <= sec[1]; seat++) {
+          const k = `${row}-${seat}`;
+          const cnt = seatMap[k] || 0;
+          const c = cls(cnt);
+          const isHLSeat = isHLRow && seat === parseInt(hlNum);
+          html += `<div class="seat-cell${c?' '+c:''}" style="width:9px;height:9px;${isHLSeat?'outline:2px solid var(--accent);outline-offset:1px;position:relative;z-index:1;':''}" title="${row}열 ${seat}번${cnt?' '+cnt+'회':''}"></div>`;
+        }
+      });
+      html += '</div>';
     });
-    html += '</div>';
+    return html + '</div></div>';
   }
-  html += '</div></div>';
-  return html;
+
+  return `<div style="overflow-x:auto;margin:8px 0;text-align:center;">
+    <div style="display:inline-block;">
+      ${renderSectionMini(ROWS_1F, '객석 1층')}
+      ${renderSectionMini(ROWS_2F, '객석 2층')}
+    </div>
+  </div>`;
 }
 
 function editCurrentRecord()   { if (currentDetailId) editRecord(currentDetailId); }
@@ -1342,9 +1345,9 @@ function renderHome() {
         <div class="next-show-dday${diff===0?' today-dday':''}">${dday}${nextShow.isBooked===false ? ' <span style="font-size:14px;opacity:0.7;font-weight:400;">미정</span>' : ''}</div>
         <div class="next-show-date">${nextShow.date} (${dow[d.getDay()]}) ${nextShow.time}</div>
         <div class="next-show-casting">
-          <span class="next-show-pill galileo">${nextShow.galileo||''}</span>
-          <span class="next-show-pill kepler">${nextShow.kepler||''}</span>
-          <span class="next-show-pill maria">${nextShow.maria||''}</span>
+          <span class="next-show-pill galileo"><span style="font-size:9px;opacity:0.8;font-weight:400;">갈릴레오 </span>${nextShow.galileo||''}</span>
+          <span class="next-show-pill kepler"><span style="font-size:9px;opacity:0.8;font-weight:400;">케플러 </span>${nextShow.kepler||''}</span>
+          <span class="next-show-pill maria"><span style="font-size:9px;opacity:0.8;font-weight:400;">마리아 </span>${nextShow.maria||''}</span>
         </div>
         ${seat ? `<div class="next-show-seat">${seat}</div>` : ''}
       </div>`;
