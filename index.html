@@ -1738,7 +1738,7 @@ function renderStats() {
     ['김지철','안지환','이상아'],['김지철','안지환','유낙원'],
     ['김지철','강병훈','이상아'],['김지철','강병훈','유낙원']
   ];
-  let ph = '<tr><th style="text-align:left;">갈릴레오</th><th style="text-align:left;">케플러</th><th style="text-align:left;">마리아</th><th>총 회차</th><th>관람</th></tr>';
+  let ph = '<tr><th style="text-align:left;width:30%">갈릴레오</th><th style="text-align:left;width:30%">케플러</th><th style="text-align:left;width:28%">마리아</th><th>총 회차</th><th>관람</th></tr>';
   let pairFound = false;
   pairs.forEach(([g,k,m]) => {
     const tot  = schedule.filter(x=>x.galileo===g&&x.kepler===k&&x.maria===m).length;
