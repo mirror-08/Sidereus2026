@@ -1,0 +1,23 @@
+{
+  "name": "시데레우스 2026",
+  "short_name": "시데레우스",
+  "description": "뮤지컬 시데레우스 2026 관람 기록 앱",
+  "start_url": "/Sidereus2026/",
+  "scope": "/Sidereus2026/",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#7A5230",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
