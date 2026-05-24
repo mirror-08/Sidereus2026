@@ -149,9 +149,6 @@
   .stats-table th { text-align: left; color: var(--text3); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--border); }
   .stats-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); }
   .stats-table td:last-child { text-align: right; font-weight: 700; color: var(--accent); }
-  #stats-pairs { table-layout: fixed; }
-  #stats-pairs th, #stats-pairs td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #stats-pairs th.col-num, #stats-pairs td.col-num { text-align: center; }
   .role-section-title { font-size: 12px; font-weight: 700; color: var(--text3); padding: 6px 8px 2px; }
 
   /* HEATMAP */
@@ -1741,13 +1738,12 @@ function renderStats() {
     ['김지철','안지환','이상아'],['김지철','안지환','유낙원'],
     ['김지철','강병훈','이상아'],['김지철','강병훈','유낙원']
   ];
-  let ph = '<colgroup><col style="width:30%"><col style="width:30%"><col style="width:28%"><col style="width:6%"><col style="width:6%"></colgroup>';
-  ph += '<tr><th>갈릴레오</th><th>케플러</th><th>마리아</th><th class="col-num">총<br>회차</th><th class="col-num">관람</th></tr>';
+  let ph = '<tr><th style="text-align:left;">갈릴레오</th><th style="text-align:left;">케플러</th><th style="text-align:left;">마리아</th><th>총 회차</th><th>관람</th></tr>';
   let pairFound = false;
   pairs.forEach(([g,k,m]) => {
     const tot  = schedule.filter(x=>x.galileo===g&&x.kepler===k&&x.maria===m).length;
     const seen = records.filter(r=>r.galileo===g&&r.kepler===k&&r.maria===m).length;
-    if (tot>0||seen>0) { pairFound = true; ph += `<tr><td>${g}</td><td>${k}</td><td>${m}</td><td class="col-num" style="color:var(--text3)">${tot}</td><td class="col-num" style="color:var(--accent);font-weight:600;">${seen}</td></tr>`; }
+    if (tot>0||seen>0) { pairFound = true; ph += `<tr><td>${g}</td><td>${k}</td><td>${m}</td><td style="color:var(--text3)">${tot}</td><td style="color:var(--accent);font-weight:600;">${seen}</td></tr>`; }
   });
   if (!pairFound) ph += '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:12px;">기록 없음</td></tr>';
   document.getElementById('stats-pairs').innerHTML = ph;
