@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sidereus2026-v8';
+const CACHE_NAME = 'sidereus2026-v9';
 const BASE = '/Sidereus2026';
 
 // 앱 시작 시 캐시할 파일들
