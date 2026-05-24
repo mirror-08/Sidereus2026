@@ -405,7 +405,7 @@
     <table class="stats-table" id="stats-actors"></table>
   </div>
   <div class="card">
-    <div class="card-title">🔗 캐스팅 조합별</div>
+    <div class="card-title">🔗 페어 조합별</div>
     <table class="stats-table" id="stats-pairs"></table>
   </div>
   <div class="card">
@@ -1738,13 +1738,14 @@ function renderStats() {
     ['김지철','안지환','이상아'],['김지철','안지환','유낙원'],
     ['김지철','강병훈','이상아'],['김지철','강병훈','유낙원']
   ];
-  let ph = '<tr><th style="text-align:left;">캐스팅</th><th>총 회차</th><th>관람</th></tr>';
+  let ph = '<tr><th style="text-align:left;">갈릴레오</th><th style="text-align:left;">케플러</th><th style="text-align:left;">마리아</th><th>총 회차</th><th>관람</th></tr>';
+  let pairFound = false;
   pairs.forEach(([g,k,m]) => {
     const tot  = schedule.filter(x=>x.galileo===g&&x.kepler===k&&x.maria===m).length;
     const seen = records.filter(r=>r.galileo===g&&r.kepler===k&&r.maria===m).length;
-    if (tot>0||seen>0) ph += `<tr><td style="font-size:12px;">${g} · ${k} · ${m}</td><td style="color:var(--text3)">${tot}</td><td>${seen}</td></tr>`;
+    if (tot>0||seen>0) { pairFound = true; ph += `<tr><td>${g}</td><td>${k}</td><td>${m}</td><td style="color:var(--text3)">${tot}</td><td style="color:var(--accent);font-weight:600;">${seen}</td></tr>`; }
   });
-  if (!ph.includes('<td style="font-size')) ph += '<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:12px;">기록 없음</td></tr>';
+  if (!pairFound) ph += '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:12px;">기록 없음</td></tr>';
   document.getElementById('stats-pairs').innerHTML = ph;
 
   renderHeatmap();
