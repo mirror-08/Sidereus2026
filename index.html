@@ -1249,6 +1249,86 @@ const SIDEREUS_ROWS = {
 const ROWS_1F = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
 const ROWS_2F = ['P','Q','R','S','T'];
 
+// ============================================================
+// SEAT ROW HTML BUILDER — shared by buildMiniSeat & renderHeatmap
+// Layout: [label 14px] [left zone 4-cell max] [8px aisle] [center zone 11-cell max] [8px aisle] [right zone 4-cell max]
+// Shorter zones use invisible phantom cells to keep right zone aligned across all rows.
+// M row: phantom-padded left zone + gray booth block + right zone.
+// ============================================================
+function buildSeatRowHtml(row, seatMap, hlRow, hlNum) {
+  const cfg = SIDEREUS_ROWS[row];
+  if (!cfg) return '';
+  const secs = cfg.sections;
+  const isHLRow = row === hlRow;
+  const cs = 9; // cell size px
+  const LEFT_MAX = 4, CENTER_MAX = 11;
+
+  function makeCell(seat) {
+    const k = `${row}-${seat}`;
+    const cnt = seatMap[k] || 0;
+    const c = cnt === 0 ? '' : cnt >= 5 ? 'v5' : 'v' + cnt;
+    const isHL = isHLRow && seat === parseInt(hlNum);
+    return `<div class="seat-cell${c?' '+c:''}" style="width:${cs}px;height:${cs}px;flex-shrink:0;${isHL?'outline:2px solid var(--accent);outline-offset:1px;position:relative;z-index:1;':''}" title="${row}열 ${seat}번${cnt?' '+cnt+'회':''}"></div>`;
+  }
+  function makePhantom() {
+    return `<div style="width:${cs}px;height:${cs}px;flex-shrink:0;visibility:hidden;"></div>`;
+  }
+
+  const lc = isHLRow ? 'var(--accent)' : 'var(--text3)';
+  const lw = isHLRow ? '700' : '400';
+  let html = `<div style="display:flex;gap:0;align-items:center;margin-bottom:1px;">`;
+  html += `<div style="width:14px;text-align:right;font-size:7px;color:${lc};padding-right:2px;flex-shrink:0;font-weight:${lw};">${row}</div>`;
+
+  if (secs.length === 1) {
+    // Single-section rows (N, O, 2F rows) — render left-aligned
+    html += `<div style="display:flex;gap:1px;">`;
+    for (let s = secs[0][0]; s <= secs[0][1]; s++) html += makeCell(s);
+    html += '</div>';
+
+  } else if (secs.length === 3 && (secs[1][1] - secs[1][0]) < 3) {
+    // Booth row (M): phantom-padded left zone + gray booth + right zone
+    const leftCount = secs[0][1] - secs[0][0] + 1;
+    // Left zone (pad to LEFT_MAX with phantoms for alignment)
+    html += `<div style="display:flex;gap:1px;flex-shrink:0;">`;
+    for (let s = secs[0][0]; s <= secs[0][1]; s++) html += makeCell(s);
+    for (let i = leftCount; i < LEFT_MAX; i++) html += makePhantom();
+    html += '</div>';
+    // Booth: same visual width as 2 aisles + center zone
+    const boothW = 8 + CENTER_MAX * cs + (CENTER_MAX - 1) + 8; // 8+99+10+8=125
+    html += `<div style="width:${boothW}px;height:${cs}px;background:var(--border);border-radius:2px;flex-shrink:0;opacity:0.7;" title="방송실"></div>`;
+    // Right zone
+    html += `<div style="display:flex;gap:1px;flex-shrink:0;">`;
+    for (let s = secs[2][0]; s <= secs[2][1]; s++) html += makeCell(s);
+    html += '</div>';
+
+  } else {
+    // Normal 3-zone rows (A–L)
+    const leftCount  = secs[0][1] - secs[0][0] + 1;
+    const centerCount = secs[1][1] - secs[1][0] + 1;
+    // Left zone (pad right with phantoms to LEFT_MAX)
+    html += `<div style="display:flex;gap:1px;flex-shrink:0;">`;
+    for (let s = secs[0][0]; s <= secs[0][1]; s++) html += makeCell(s);
+    for (let i = leftCount; i < LEFT_MAX; i++) html += makePhantom();
+    html += '</div>';
+    // Aisle 1
+    html += `<div style="width:8px;flex-shrink:0;"></div>`;
+    // Center zone (pad right with phantoms to CENTER_MAX)
+    html += `<div style="display:flex;gap:1px;flex-shrink:0;">`;
+    for (let s = secs[1][0]; s <= secs[1][1]; s++) html += makeCell(s);
+    for (let i = centerCount; i < CENTER_MAX; i++) html += makePhantom();
+    html += '</div>';
+    // Aisle 2
+    html += `<div style="width:8px;flex-shrink:0;"></div>`;
+    // Right zone
+    html += `<div style="display:flex;gap:1px;flex-shrink:0;">`;
+    for (let s = secs[2][0]; s <= secs[2][1]; s++) html += makeCell(s);
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
 function buildMiniSeat(hlRow, hlNum) {
   const records = getRecords();
   const seatMap = {};
@@ -1258,28 +1338,10 @@ function buildMiniSeat(hlRow, hlNum) {
       seatMap[k] = (seatMap[k]||0) + 1;
     }
   });
-  const cls = c => !c ? '' : c >= 5 ? 'v5' : 'v' + c;
 
   function renderSectionMini(rows, label) {
-    let html = `<div style="margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px;text-align:center;">${label}</div><div style="display:flex;flex-direction:column;align-items:center;">`;
-    rows.forEach(row => {
-      const cfg = SIDEREUS_ROWS[row];
-      if (!cfg) return;
-      const isHLRow = row === hlRow;
-      html += `<div style="display:flex;gap:1px;align-items:center;margin-bottom:1px;">`;
-      html += `<div style="width:14px;text-align:right;font-size:7px;color:${isHLRow?'var(--accent)':'var(--text3)'};padding-right:2px;font-weight:${isHLRow?'700':'400'};">${row}</div>`;
-      cfg.sections.forEach((sec, si) => {
-        if (si > 0) html += '<div style="width:2px;"></div>';
-        for (let seat = sec[0]; seat <= sec[1]; seat++) {
-          const k = `${row}-${seat}`;
-          const cnt = seatMap[k] || 0;
-          const c = cls(cnt);
-          const isHLSeat = isHLRow && seat === parseInt(hlNum);
-          html += `<div class="seat-cell${c?' '+c:''}" style="width:9px;height:9px;${isHLSeat?'outline:2px solid var(--accent);outline-offset:1px;position:relative;z-index:1;':''}" title="${row}열 ${seat}번${cnt?' '+cnt+'회':''}"></div>`;
-        }
-      });
-      html += '</div>';
-    });
+    let html = `<div style="margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px;text-align:center;">${label}</div><div style="display:flex;flex-direction:column;align-items:flex-start;">`;
+    rows.forEach(row => { html += buildSeatRowHtml(row, seatMap, hlRow, hlNum); });
     return html + '</div></div>';
   }
 
@@ -1697,26 +1759,10 @@ function renderHeatmap() {
       seatMap[k] = (seatMap[k]||0) + 1;
     }
   });
-  const cls = c => !c ? '' : c >= 5 ? 'v5' : 'v' + c;
 
   function renderSection(rows, label) {
-    let html = `<div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px;text-align:center;">${label}</div><div style="display:flex;flex-direction:column;align-items:center;">`;
-    rows.forEach(row => {
-      const cfg = SIDEREUS_ROWS[row];
-      if (!cfg) return;
-      html += `<div style="display:flex;gap:1px;align-items:center;margin-bottom:1px;">`;
-      html += `<div style="width:14px;text-align:right;font-size:7px;color:var(--text3);padding-right:2px;">${row}</div>`;
-      cfg.sections.forEach((sec, si) => {
-        if (si > 0) html += '<div style="width:2px;"></div>';
-        for (let seat = sec[0]; seat <= sec[1]; seat++) {
-          const k = `${row}-${seat}`;
-          const cnt = seatMap[k] || 0;
-          const c = cls(cnt);
-          html += `<div class="seat-cell${c?' '+c:''}" style="width:9px;height:9px;" title="${row}열 ${seat}번 ${cnt}회"></div>`;
-        }
-      });
-      html += '</div>';
-    });
+    let html = `<div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px;text-align:center;">${label}</div><div style="display:flex;flex-direction:column;align-items:flex-start;">`;
+    rows.forEach(row => { html += buildSeatRowHtml(row, seatMap, null, null); });
     return html + '</div></div>';
   }
 
