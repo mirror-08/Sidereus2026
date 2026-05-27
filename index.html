@@ -1188,9 +1188,9 @@ function openDetail(id) {
     : '<span style="font-size:11px;color:var(--success);margin-left:6px;">✅ 예매확정</span>';
   document.getElementById('detail-title').innerHTML = `${r.date} (${dow[d.getDay()]}) ${r.time}${bookedBadge}`;
   let html = `<div class="casting-display">
-    <div class="casting-tag galileo">갈릴레오 ${r.galileo||''}</div>
-    <div class="casting-tag kepler">케플러 ${r.kepler||''}</div>
-    <div class="casting-tag maria">마리아 ${r.maria||''}</div>
+    <div class="casting-tag galileo"><span style="font-size:10px;font-weight:400;opacity:0.75;">갈릴레오 </span>${r.galileo||''}</div>
+    <div class="casting-tag kepler"><span style="font-size:10px;font-weight:400;opacity:0.75;">케플러 </span>${r.kepler||''}</div>
+    <div class="casting-tag maria"><span style="font-size:10px;font-weight:400;opacity:0.75;">마리아 </span>${r.maria||''}</div>
   </div>`;
   if (r.comment) html += `<div class="detail-field"><div class="detail-field-label">한줄 코멘트</div><div class="detail-field-value">${r.comment}</div></div>`;
   if (r.seatZone) {
