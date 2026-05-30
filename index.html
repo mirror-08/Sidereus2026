@@ -726,6 +726,8 @@
       <label class="form-label">도장 추가 방식</label>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="radio" name="stamp-method" value="직접 관람" checked onchange="updateStampSessionOptions()"> 직접 관람</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="radio" name="stamp-method" value="더블 적립" onchange="updateStampSessionOptions()"> 더블 적립</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="radio" name="stamp-method" value="트리플 적립" onchange="updateStampSessionOptions()"> 트리플 적립</label>
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="radio" name="stamp-method" value="교환" onchange="updateStampSessionOptions()"> 교환</label>
       </div>
     </div>
@@ -2160,6 +2162,13 @@ function updateStampSessionOptions() {
   const container = document.getElementById('stamp-session-options');
   const exchangeMemoGroup = document.getElementById('stamp-exchange-memo-group');
   if (exchangeMemoGroup) exchangeMemoGroup.style.display = method === '교환' ? '' : 'none';
+  if (method === '더블 적립') {
+    const q = document.querySelector('input[name="stamp-qty"][value="2"]');
+    if (q) { q.checked = true; updateQtyLabel(); }
+  } else if (method === '트리플 적립') {
+    const q = document.querySelector('input[name="stamp-qty"][value="3"]');
+    if (q) { q.checked = true; updateQtyLabel(); }
+  }
   if (!group || !container) return;
   if (!date) { group.style.display = 'none'; return; }
   const sessions = getSchedule().filter(s => s.date === date);
