@@ -5,5 +5,11 @@
   { "name": "관객과의 대화", "startDate": "2026-07-28", "endDate": "2026-07-29", "color": "#D4A24F" },
   { "name": "공연 사진 엽서 증정", "startDate": "2026-07-04", "endDate": "2026-07-05", "color": "#8A6FD4" },
   { "name": "공연 사진 엽서 증정", "startDate": "2026-07-07", "endDate": "2026-07-11", "color": "#8A6FD4" },
-  { "name": "폴라로이드 사진 증정", "startDate": "2026-07-11", "endDate": "2026-07-12", "color": "#D4794F" }
+  { "name": "폴라로이드 사진 증정", "startDate": "2026-07-11", "endDate": "2026-07-12", "color": "#D4794F" },
+  { "name": "스페셜 스테이지", "startDate": "2026-07-07", "endDate": "2026-07-08", "color": "#3AAFA9" },
+  { "name": "스페셜 스테이지", "startDate": "2026-07-19", "endDate": "2026-07-19", "color": "#3AAFA9" },
+  { "name": "스페셜 MD 부스", "startDate": "2026-07-09", "endDate": "2026-07-09", "color": "#B08A3C" },
+  { "name": "스페셜 MD 부스", "startDate": "2026-07-16", "endDate": "2026-07-16", "color": "#B08A3C" },
+  { "name": "스페셜 MD 부스", "startDate": "2026-07-18", "endDate": "2026-07-18", "color": "#B08A3C" },
+  { "name": "하이파이브 이벤트", "startDate": "2026-07-15", "endDate": "2026-07-15", "color": "#E0607E" }
 ]
